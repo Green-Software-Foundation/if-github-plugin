@@ -25,7 +25,7 @@ This is how you could run the model in Typescript:
 ```typescript
 async function runPlugin() {
   const config = {
-    'repo-name': 'Green-Software-Foundation/if',
+    repo: 'Green-Software-Foundation/if',
   };
   const github = await new Github(config);
   const usage = await github.execute([
@@ -43,7 +43,7 @@ runPlugin();
 
 ## Global Config
 
-- `repo-name`: (required) specifies the name of the organization (or owner) and repository name, combined with `/`, e.g. `Green-Software-Foundation/if`
+- `repo`: (required) specifies the name of the organization (or owner) and repository name, combined with `/`, e.g. `Green-Software-Foundation/if`
 
 ## Input Parameters
 
@@ -78,14 +78,12 @@ initialize:
       method: Github
       path: if-github-plugin
       global-config:
-        repo-name: Green-Software-Foundation/if
-        time: 'week'
+        repo: Green-Software-Foundation/if
 tree:
   children:
     github:
       pipeline:
         - github-plugin
-      config:
       defaults:
       inputs:
         - timestamp: 2024-07-05T00:00

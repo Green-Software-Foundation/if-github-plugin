@@ -27,7 +27,7 @@ describe('lib/github: ', () => {
 
   describe('Github(): ', () => {
     const config = {
-      'repo-name': 'Green-Software-Foundation/if',
+      repo: 'Green-Software-Foundation/if',
     };
 
     it('has metadata field.', () => {
@@ -94,7 +94,7 @@ describe('lib/github: ', () => {
           if (error instanceof Error) {
             expect(error).toBeInstanceOf(InputValidationError);
             expect(error.message).toEqual(
-              '"repo-name" parameter is required. Error code: invalid_type.'
+              '"repo" parameter is required. Error code: invalid_type.'
             );
           }
         }

@@ -21,8 +21,8 @@ export const Github = (globalConfig: ConfigParams): ExecutePlugin => {
    * Gets sizes and clones of the repository.
    */
   const execute = async (inputs: PluginParams[]) => {
-    const { 'repo-name': repoName } = validateGlobalConfig();
-    const { clones, size } = await getRepoData(repoName);
+    const { repo } = validateGlobalConfig();
+    const { clones, size } = await getRepoData(repo);
 
     return inputs.map((input, index) => {
       const safeInput = Object.assign({}, input, validateInput(input, index));
@@ -39,10 +39,10 @@ export const Github = (globalConfig: ConfigParams): ExecutePlugin => {
   /**
    * Gets repo data from the GitHub API.
    */
-  const getRepoData = async (repoName: string) => {
-    const [owner, repo] = repoName.split('/');
+  const getRepoData = async (repo: string) => {
+    const [owner, repoName] = repo.split('/');
 
-    return await GithubAPI().getRepoClonesAndSizes(owner, repo);
+    return await GithubAPI().getRepoClonesAndSizes(owner, repoName);
   };
 
   /**
@@ -111,7 +111,7 @@ export const Github = (globalConfig: ConfigParams): ExecutePlugin => {
     }
 
     const schema = z.object({
-      'repo-name': z.string().regex(/^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/),
+      repo: z.string().regex(/^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/),
     });
 
     return validate<z.infer<typeof schema>>(schema, globalConfig);
