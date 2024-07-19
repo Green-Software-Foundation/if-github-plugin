@@ -100,5 +100,5 @@ if-run -m <path-to-your-manifest>
 
 The plugin simply grabs data for a given repository from the github.com API.
 
-- To calculate `clones`, the plugin uses [this](https://docs.github.com/en/rest/metrics/traffic) endpoint.
+- To calculate `clones`, the plugin uses [traffic](https://docs.github.com/en/rest/metrics/traffic) endpoint.
 - To get `size` of the repository, the plugin uses [get a repository](https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#get-a-repository) endpoint.
