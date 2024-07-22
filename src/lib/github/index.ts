@@ -4,6 +4,7 @@ import {
   PluginParams,
   ExecutePlugin,
   ConfigParams,
+  PluginParametersMetadata,
 } from '@grnsft/if-core/types';
 
 import { validate } from '../../util/validations';
@@ -12,9 +13,24 @@ import { GithubAPI } from './api';
 
 const { GlobalConfigError } = ERRORS;
 
-export const Github = (globalConfig: ConfigParams): ExecutePlugin => {
+export const Github = (
+  globalConfig: ConfigParams,
+  parametersMetadata: PluginParametersMetadata
+): ExecutePlugin => {
   const metadata = {
     kind: 'execute',
+    inputs: parametersMetadata?.inputs,
+    outputs: parametersMetadata?.outputs || {
+      clones: {
+        description:
+          'the clones count of the given repository in the specified time range',
+        unit: 'number',
+      },
+      size: {
+        description: 'the size of the given repository',
+        unit: 'GB',
+      },
+    },
   };
 
   /**
