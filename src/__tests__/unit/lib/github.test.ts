@@ -10,6 +10,7 @@ jest.mock('axios');
 const mockAxios = axios as jest.Mocked<typeof axios>;
 const { InputValidationError, GlobalConfigError } = ERRORS;
 
+mockAxios.create = jest.fn(() => mockAxios);
 mockAxios.get.mockImplementation(getMockResponse);
 
 describe('lib/github: ', () => {
