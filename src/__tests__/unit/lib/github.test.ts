@@ -16,6 +16,10 @@ mockAxios.get.mockImplementation(getMockResponse);
 describe('lib/github: ', () => {
   const originalProcessEnv = process.env;
   const spy = jest.spyOn(global.console, 'warn');
+  const parametersMetadata = {
+    inputs: {},
+    outputs: {},
+  };
 
   beforeAll(() => {
     process.env.GITHUB_TOKEN = 'mock-token';
@@ -32,7 +36,7 @@ describe('lib/github: ', () => {
     };
 
     it('has metadata field.', () => {
-      const github = Github({});
+      const github = Github({}, parametersMetadata);
 
       expect.assertions(4);
       expect(github).toHaveProperty('metadata');
@@ -43,7 +47,7 @@ describe('lib/github: ', () => {
 
     describe('execute(): ', () => {
       it('executes with the correct data.', async () => {
-        const github = Github(config);
+        const github = Github(config, parametersMetadata);
         const inputs = [
           {
             timestamp: '2024-07-05T00:00',
@@ -63,7 +67,7 @@ describe('lib/github: ', () => {
       });
 
       it('executes with the correct data when the `duration` is exceed 14 days.', async () => {
-        const github = Github(config);
+        const github = Github(config, parametersMetadata);
         const inputs = [
           {
             timestamp: '2024-07-05T00:00',
@@ -80,7 +84,7 @@ describe('lib/github: ', () => {
       });
 
       it('throws an error when config is an empty object.', async () => {
-        const github = Github({});
+        const github = Github({}, parametersMetadata);
         const inputs = [
           {
             timestamp: '2024-07-05T00:00',
@@ -103,7 +107,7 @@ describe('lib/github: ', () => {
 
       it('throws an error when config is not provided.', async () => {
         const config = undefined;
-        const github = Github(config!);
+        const github = Github(config!, parametersMetadata);
 
         expect.assertions(2);
         try {
