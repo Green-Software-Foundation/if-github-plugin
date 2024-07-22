@@ -1,20 +1,44 @@
 import * as dotenv from 'dotenv';
 import axios from 'axios';
 
-import { ERRORS } from '../../util/errors';
+import { ERRORS } from '@grnsft/if-core/utils';
+
+import { ClonesResponse, SizeResponse } from './types';
 
 const { AuthorizationError, APIRequestError } = ERRORS;
 
 dotenv.config();
 
 export const GithubAPI = () => {
+  const token = process.env.GITHUB_TOKEN;
+  const githubAPI = axios.create({
+    baseURL: 'https://api.github.com/',
+    headers: {
+      Authorization: `token ${token}`,
+    },
+  });
+
+  githubAPI?.interceptors?.response?.use(
+    (response) => response.data,
+    (error) => {
+      if (error.response) {
+        throw new APIRequestError(
+          `Error fetching data from GitHub API. Status: ${error.response.status}, Message: ${error.response.statusText}`
+        );
+      } else if (error.request) {
+        throw new APIRequestError(
+          `No response received from GitHub API. ${error.message}`
+        );
+      } else {
+        throw new APIRequestError(`Request error: ${error.message}`);
+      }
+    }
+  );
+
   /**
    * Gets sizes and clones of the specified owner's repo.
    */
   const getRepoClonesAndSizes = async (owner: string, repo: string) => {
-    const token = process.env.GITHUB_TOKEN;
-    axios.defaults.headers.common['Authorization'] = `token ${token}`;
-
     if (!token) {
       throw new AuthorizationError(
         'Token does not persist in the environment variables.'
@@ -38,7 +62,7 @@ export const GithubAPI = () => {
    */
   const checkTokenValidity = async (token: string) => {
     try {
-      return await axios.get('https://api.github.com/user');
+      return await githubAPI.get('user');
     } catch (error) {
       throw new AuthorizationError(
         `Provided token: ${token} is invalid. ${error}`
@@ -51,7 +75,7 @@ export const GithubAPI = () => {
    */
   const checkOwnerValidity = async (owner: string) => {
     try {
-      return await axios.get(`https://api.github.com/orgs/${owner}`);
+      return await githubAPI.get(`orgs/${owner}`);
     } catch (error) {
       throw new APIRequestError(
         `Error fetching owner: ${owner} from GitHub API. ${error}`
@@ -64,17 +88,11 @@ export const GithubAPI = () => {
    */
   const getRepoClones = async (owner: string, repo: string) => {
     try {
-      const result = await axios.get(
-        `https://api.github.com/repos/${owner}/${repo}/traffic/clones`
+      const result = await githubAPI.get<ClonesResponse, any>(
+        `repos/${owner}/${repo}/traffic/clones`
       );
 
-      if (result?.status !== 200) {
-        throw new APIRequestError(
-          `Error fetching clones from GitHub API for owner: ${owner} and repo: ${repo}. ${JSON.stringify(result?.status)}`
-        );
-      }
-
-      return result?.data.clones;
+      return result?.clones;
     } catch (error) {
       throw new APIRequestError(
         `Error fetching clones from GitHub API for owner: ${owner} and repo: ${repo}. ${error}`
@@ -87,17 +105,10 @@ export const GithubAPI = () => {
    */
   const getRepoSizeInGB = async (owner: string, repo: string) => {
     try {
-      const result = await axios.get(
-        `https://api.github.com/repos/${owner}/${repo}`
+      const result = await githubAPI.get<SizeResponse, any>(
+        `repos/${owner}/${repo}`
       );
-
-      if (result?.status !== 200) {
-        throw new APIRequestError(
-          `Error fetching size from GitHub API for owner: ${owner} and repo: ${repo}. ${JSON.stringify(result.status)}`
-        );
-      }
-
-      return result?.data?.size / (1000 * 1000);
+      return result?.size / (1000 * 1000);
     } catch (error) {
       throw new APIRequestError(
         `Error fetching size from GitHub API for owner: ${owner} and repo: ${repo}. ${error}`
