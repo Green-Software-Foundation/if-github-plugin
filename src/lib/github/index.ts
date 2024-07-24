@@ -1,13 +1,11 @@
 import { z } from 'zod';
-import { ERRORS } from '@grnsft/if-core/utils';
+import { ERRORS, validate } from '@grnsft/if-core/utils';
 import {
   PluginParams,
   ExecutePlugin,
   ConfigParams,
   PluginParametersMetadata,
 } from '@grnsft/if-core/types';
-
-import { validate } from '../../util/validations';
 
 import { GithubAPI } from './api';
 
