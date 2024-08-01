@@ -64,9 +64,13 @@ The plugin can throw the following errors:
 
 ## Integration into Impact Framework
 
-You can load the plugin directly from this Github repository. Simply run `npm install -g https://github.com/Green-Software-Foundation/if-github-plugin`
+Clone this repository to your local machine to play with a local copy. In the project root run `npm run build && npm link`.
 
-Then, in your `manifest`, provide the path in the model instantiation. You also need to specify the function name for the exported plugin function.
+This creates a package with global scope on your local machine that can be installed by your instance of Impact Framework.
+
+Navigate to the Impact Framework root, and run `npm link if-github-plugin`.
+
+Now, you can use the plugin by including it in your manifest file as follows:
 
 ```yaml
 name: github demo
