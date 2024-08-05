@@ -87,7 +87,8 @@ tree:
   children:
     github:
       pipeline:
-        - github-plugin
+        compute:
+          - github-plugin
       defaults:
       inputs:
         - timestamp: 2024-07-05T00:00
