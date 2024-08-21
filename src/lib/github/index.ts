@@ -5,15 +5,18 @@ import {
   ExecutePlugin,
   ConfigParams,
   PluginParametersMetadata,
+  MappingParams,
 } from '@grnsft/if-core/types';
 
 import { GithubAPI } from './api';
+import { mapOutputIfNeeded } from '@grnsft/if-core/utils/helpers';
 
-const { GlobalConfigError } = ERRORS;
+const { ConfigError } = ERRORS;
 
 export const Github = (
-  globalConfig: ConfigParams,
-  parametersMetadata: PluginParametersMetadata
+  config: ConfigParams,
+  parametersMetadata: PluginParametersMetadata,
+  mapping: MappingParams
 ): ExecutePlugin => {
   const metadata = {
     kind: 'execute',
@@ -42,11 +45,13 @@ export const Github = (
       const safeInput = Object.assign({}, input, validateInput(input, index));
       const clonesCount = getClonesForTimeRange(safeInput, clones);
 
-      return {
+      const result = {
         ...input,
         clones: clonesCount,
         size,
       };
+
+      return mapOutputIfNeeded(result, mapping);
     });
   };
 
@@ -68,7 +73,7 @@ export const Github = (
   ) => {
     const twoWeeksInMilliseconds = 14 * 24 * 60 * 60 * 1000;
     const { timestamp, duration } = input;
-    const evaledDuration = eval(duration);
+    const evaledDuration = eval(duration) * 1000;
     const convertedTimestamp = localToUTC(timestamp);
     const startTime = new Date(convertedTimestamp || timestamp).getTime();
     const endTime = startTime + evaledDuration;
@@ -120,15 +125,15 @@ export const Github = (
    * Checks if global config value are valid.
    */
   const validateGlobalConfig = () => {
-    if (!globalConfig) {
-      throw new GlobalConfigError('Global config is not provided.');
+    if (!config) {
+      throw new ConfigError('Config is not provided.');
     }
 
     const schema = z.object({
       repo: z.string().regex(/^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/),
     });
 
-    return validate<z.infer<typeof schema>>(schema, globalConfig);
+    return validate<z.infer<typeof schema>>(schema, config);
   };
 
   return {

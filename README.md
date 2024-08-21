@@ -41,14 +41,27 @@ async function runPlugin() {
 runPlugin();
 ```
 
-## Global Config
+## Config
 
 - `repo`: (required) specifies the name of the organization (or owner) and repository name, combined with `/`, e.g. `Green-Software-Foundation/if`
 
 ## Input Parameters
 
 - `timestamp`: (required) specifies the start of the time range for retrieving data from the GitHub API. Note that the GitHub API provides data only for last two weeks, so the `timestamp` should be no earlier than 2 weeks ago.
-- `duration`: (required) specifies the end of the time range for retrieving data from the API. It can be either number or string like `14 * 24 * 60 * 60 * 1000`.
+- `duration`: (required) specifies the end of the time range for retrieving data from the API. It can be either number or string like `14 * 24 * 60 * 60`.
+
+## Mapping
+
+The `mapping` block is an optional block. It is added in the plugin section and allows the plugin to map the output parameters of the plugin. The structure of the `mapping` block is:
+
+```yaml
+github-plugin:
+  path: if-github-plugin
+  method: Github
+  mapping:
+    'size': 'repo-size-if'
+    'clones': 'repo-clones-if'
+```
 
 ## Output
 
