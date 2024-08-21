@@ -8,7 +8,7 @@ import { getMockResponse } from '../../../__mocks__/api';
 jest.mock('axios');
 
 const mockAxios = axios as jest.Mocked<typeof axios>;
-const { InputValidationError, GlobalConfigError } = ERRORS;
+const { InputValidationError, ConfigError } = ERRORS;
 
 mockAxios.create = jest.fn(() => mockAxios);
 mockAxios.get.mockImplementation(getMockResponse);
@@ -36,7 +36,7 @@ describe('lib/github: ', () => {
     };
 
     it('has metadata field.', () => {
-      const github = Github({}, parametersMetadata);
+      const github = Github({}, parametersMetadata, {});
 
       expect.assertions(4);
       expect(github).toHaveProperty('metadata');
@@ -47,7 +47,7 @@ describe('lib/github: ', () => {
 
     describe('execute(): ', () => {
       it('executes with the correct data.', async () => {
-        const github = Github(config, parametersMetadata);
+        const github = Github(config, parametersMetadata, {});
         const inputs = [
           {
             timestamp: '2024-07-05T00:00',
@@ -66,12 +66,36 @@ describe('lib/github: ', () => {
         });
       });
 
-      it('executes with the correct data when the `duration` is exceed 14 days.', async () => {
-        const github = Github(config, parametersMetadata);
+      it('successfully executes when the mapping maps output parameters.', async () => {
+        const mapping = {
+          size: 'repo-size-if',
+          clones: 'repo-clones-if',
+        };
+        const github = Github(config, parametersMetadata, mapping);
         const inputs = [
           {
             timestamp: '2024-07-05T00:00',
-            duration: 15 * 24 * 60 * 60 * 1000,
+            duration: 14 * 24 * 60 * 60,
+          },
+        ];
+
+        const response = await github.execute(inputs);
+        expect.assertions(3);
+
+        expect(response).toBeInstanceOf(Array);
+
+        response.forEach((item) => {
+          expect(item).toHaveProperty('repo-clones-if');
+          expect(item).toHaveProperty('repo-size-if');
+        });
+      });
+
+      it('executes with the correct data when the `duration` is exceed 14 days.', async () => {
+        const github = Github(config, parametersMetadata, {});
+        const inputs = [
+          {
+            timestamp: '2024-07-05T00:00',
+            duration: 15 * 24 * 60 * 60,
           },
         ];
 
@@ -84,7 +108,7 @@ describe('lib/github: ', () => {
       });
 
       it('throws an error when config is an empty object.', async () => {
-        const github = Github({}, parametersMetadata);
+        const github = Github({}, parametersMetadata, {});
         const inputs = [
           {
             timestamp: '2024-07-05T00:00',
@@ -107,15 +131,15 @@ describe('lib/github: ', () => {
 
       it('throws an error when config is not provided.', async () => {
         const config = undefined;
-        const github = Github(config!, parametersMetadata);
+        const github = Github(config!, parametersMetadata, {});
 
         expect.assertions(2);
         try {
           await github.execute([]);
         } catch (error) {
           if (error instanceof Error) {
-            expect(error).toBeInstanceOf(GlobalConfigError);
-            expect(error.message).toEqual('Global config is not provided.');
+            expect(error).toBeInstanceOf(ConfigError);
+            expect(error.message).toEqual('Config is not provided.');
           }
         }
       });
