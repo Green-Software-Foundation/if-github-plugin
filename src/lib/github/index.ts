@@ -130,7 +130,7 @@ export const Github = (
     }
 
     const schema = z.object({
-      repo: z.string().regex(/^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/),
+      repo: z.string().regex(/^[a-zA-Z0-9_-]+\/[a-zA-Z0-9._-]+$/),
     });
 
     return validate<z.infer<typeof schema>>(schema, config);
