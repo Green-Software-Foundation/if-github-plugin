@@ -16,10 +16,12 @@ export const Github = PluginFactory({
         description:
           'the clones count of the given repository in the specified time range',
         unit: 'number',
+        'aggregation-method': { time: 'sum', component: 'sum' },
       },
       size: {
         description: 'the size of the given repository',
         unit: 'GB',
+        'aggregation-method': { time: 'sum', component: 'sum' },
       },
     },
   },
