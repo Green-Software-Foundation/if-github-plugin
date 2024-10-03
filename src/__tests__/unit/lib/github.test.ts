@@ -1,14 +1,14 @@
 import axios from 'axios';
 import { ERRORS } from '@grnsft/if-core/utils';
 
-import { Github } from '../../../lib/github';
+import { Github } from '../../../lib';
 
 import { getMockResponse } from '../../../__mocks__/api';
 
 jest.mock('axios');
 
 const mockAxios = axios as jest.Mocked<typeof axios>;
-const { InputValidationError, ConfigError } = ERRORS;
+const { ConfigError } = ERRORS;
 
 mockAxios.create = jest.fn(() => mockAxios);
 mockAxios.get.mockImplementation(getMockResponse);
@@ -119,23 +119,6 @@ describe('lib/github: ', () => {
         expect.assertions(2);
         try {
           await github.execute(inputs);
-        } catch (error) {
-          if (error instanceof Error) {
-            expect(error).toBeInstanceOf(InputValidationError);
-            expect(error.message).toEqual(
-              '"repo" parameter is required. Error code: invalid_type.'
-            );
-          }
-        }
-      });
-
-      it('throws an error when config is not provided.', async () => {
-        const config = undefined;
-        const github = Github(config!, parametersMetadata, {});
-
-        expect.assertions(2);
-        try {
-          await github.execute([]);
         } catch (error) {
           if (error instanceof Error) {
             expect(error).toBeInstanceOf(ConfigError);

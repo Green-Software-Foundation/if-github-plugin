@@ -27,7 +27,8 @@ async function runPlugin() {
   const config = {
     repo: 'Green-Software-Foundation/if',
   };
-  const github = await new Github(config);
+  const parametersMetada = { inputs: {}, outputs: {} };
+  const github = Github(config, parametersMetdata, {});
   const usage = await github.execute([
     {
       timestamp: '2024-07-05T00:00',
@@ -94,7 +95,7 @@ initialize:
     github-plugin:
       method: Github
       path: if-github-plugin
-      global-config:
+      config:
         repo: Green-Software-Foundation/if
 tree:
   children:
