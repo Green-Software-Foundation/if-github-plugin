@@ -1,11 +1,11 @@
 import * as dotenv from 'dotenv';
 import axios from 'axios';
 
-import { ERRORS } from '@grnsft/if-core/utils';
+import {ERRORS} from '@grnsft/if-core/utils';
 
-import { ClonesResponse, SizeResponse } from './types';
+import {ClonesResponse, SizeResponse} from './types';
 
-const { AuthorizationError, APIRequestError } = ERRORS;
+const {AuthorizationError, APIRequestError} = ERRORS;
 
 dotenv.config();
 
@@ -19,8 +19,8 @@ export const GithubAPI = () => {
   });
 
   githubAPI?.interceptors?.response?.use(
-    (response) => response.data,
-    (error) => {
+    response => response.data,
+    error => {
       if (error.response) {
         throw new APIRequestError(
           `Error fetching data from GitHub API. Status: ${error.response.status}, Message: ${error.response.statusText}`
