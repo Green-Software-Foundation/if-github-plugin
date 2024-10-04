@@ -1,4 +1,4 @@
-# README
+# Impact Framework Github Plugin
 
 ## Overview
 
