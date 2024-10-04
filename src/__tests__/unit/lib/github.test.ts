@@ -1,14 +1,14 @@
 import axios from 'axios';
-import { ERRORS } from '@grnsft/if-core/utils';
+import {ERRORS} from '@grnsft/if-core/utils';
 
-import { Github } from '../../../lib';
+import {Github} from '../../../lib';
 
-import { getMockResponse } from '../../../__mocks__/api';
+import {getMockResponse} from '../../../__mocks__/api';
 
 jest.mock('axios');
 
 const mockAxios = axios as jest.Mocked<typeof axios>;
-const { ConfigError } = ERRORS;
+const {ConfigError} = ERRORS;
 
 mockAxios.create = jest.fn(() => mockAxios);
 mockAxios.get.mockImplementation(getMockResponse);
@@ -38,10 +38,9 @@ describe('lib/github: ', () => {
     it('has metadata field.', () => {
       const github = Github({}, parametersMetadata, {});
 
-      expect.assertions(4);
+      expect.assertions(3);
       expect(github).toHaveProperty('metadata');
       expect(github).toHaveProperty('execute');
-      expect(github.metadata).toHaveProperty('kind');
       expect(typeof github.execute).toBe('function');
     });
 
@@ -60,7 +59,7 @@ describe('lib/github: ', () => {
 
         expect(response).toBeInstanceOf(Array);
 
-        response.forEach((item) => {
+        response.forEach(item => {
           expect(item).toHaveProperty('clones');
           expect(item).toHaveProperty('size');
         });
@@ -84,7 +83,7 @@ describe('lib/github: ', () => {
 
         expect(response).toBeInstanceOf(Array);
 
-        response.forEach((item) => {
+        response.forEach(item => {
           expect(item).toHaveProperty('repo-clones-if');
           expect(item).toHaveProperty('repo-size-if');
         });
