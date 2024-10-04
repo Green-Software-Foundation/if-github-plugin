@@ -1,12 +1,12 @@
-import { z } from 'zod';
+import {z} from 'zod';
 
-import { PluginParams, ConfigParams } from '@grnsft/if-core/types';
-import { PluginFactory } from '@grnsft/if-core/interfaces';
-import { ERRORS, validate } from '@grnsft/if-core/utils';
+import {PluginParams, ConfigParams} from '@grnsft/if-core/types';
+import {PluginFactory} from '@grnsft/if-core/interfaces';
+import {ERRORS, validate} from '@grnsft/if-core/utils';
 
-import { GithubAPI } from './api';
+import {GithubAPI} from './api';
 
-const { ConfigError } = ERRORS;
+const {ConfigError} = ERRORS;
 
 export const Github = PluginFactory({
   metadata: {
@@ -16,20 +16,20 @@ export const Github = PluginFactory({
         description:
           'the clones count of the given repository in the specified time range',
         unit: 'number',
-        'aggregation-method': { time: 'sum', component: 'sum' },
+        'aggregation-method': {time: 'sum', component: 'sum'},
       },
       size: {
         description: 'the size of the given repository',
         unit: 'GB',
-        'aggregation-method': { time: 'sum', component: 'sum' },
+        'aggregation-method': {time: 'sum', component: 'sum'},
       },
     },
   },
   implementation: async (inputs: PluginParams[], config: ConfigParams) => {
-    const { repo } = config;
-    const { clones, size } = await getRepoData(repo);
+    const {repo} = config;
+    const {clones, size} = await getRepoData(repo);
 
-    return inputs.map((input) => ({
+    return inputs.map(input => ({
       ...input,
       clones: getClonesForTimeRange(input, clones),
       size,
@@ -74,10 +74,10 @@ const getRepoData = async (repo: string) => {
  */
 const getClonesForTimeRange = (
   input: PluginParams,
-  clones: { timestamp: string; count: number }[]
+  clones: {timestamp: string; count: number}[]
 ) => {
   const twoWeeksInMilliseconds = 14 * 24 * 60 * 60 * 1000;
-  const { timestamp, duration } = input;
+  const {timestamp, duration} = input;
   const evaledDuration = eval(duration) * 1000;
   const convertedTimestamp = localToUTC(timestamp);
   const startTime = new Date(convertedTimestamp || timestamp).getTime();
